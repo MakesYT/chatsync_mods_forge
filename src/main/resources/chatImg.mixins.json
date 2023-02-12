@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "top.ncserver.chatimg.Tools.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "chatimg.refmap.json",
+  "mixins": [
+
+  ],
+  "client": [
+    "NewChatGui"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
