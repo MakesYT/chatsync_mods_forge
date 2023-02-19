@@ -2,15 +2,9 @@ package top.ncserver.chatimg;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.texture.Texture;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -24,20 +18,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.ncserver.chatimg.Tools.Img;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.versions.forge.ForgeVersion.MOD_ID;
-
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("chatimg")
 public class ChatImg {
-
-    // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
     public static Map<Integer, Img> imgMap=new LinkedHashMap<Integer, Img>();
     public ChatImg() {
