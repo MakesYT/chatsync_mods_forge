@@ -1,23 +1,15 @@
 package top.ncserver.chatimg.Tools.mixin;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ChatLine;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.gui.RenderComponentsUtil;
 import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,9 +18,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import top.ncserver.chatimg.ChatImg;
 import top.ncserver.chatimg.Tools.Img;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.*;
+import java.util.Deque;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,27 +139,41 @@ public abstract class NewChatGui  extends AbstractGui {
                                        imgID= Integer.parseInt((matcher.group(0)).split("=")[1].replace("]",""));
                                     }
                                     Img img= ChatImg.imgMap.get(imgID);
-                                    if (img.allReceived()){
+                                    if (img.allReceived()) {
                                         p_238492_1_.push();
                                         p_238492_1_.translate(0.0D, 0.0D, 50.0D);
-                                        fill(p_238492_1_, -2, indexY+9, k + 4, indexY-img.getHeight()+9, i2 << 24);
+                                        fill(p_238492_1_, -2, indexY + 9, k + 4, indexY - img.getHeight() + 9, i2 << 24);
                                         RenderSystem.enableBlend();
                                         p_238492_1_.translate(0.0D, 0.0D, 50.0D);
                                         //this.mc.fontRenderer.drawTextWithShadow(p_238492_1_, chatline.getLineString(), 0.0F, (float)((int)(d6 + d4)), 16777215 + (l1 << 24));
-                                        ResourceLocation F=new ResourceLocation("chatimg","imgs/"+imgID);
-                                        RenderSystem.color4f(0.6F,0.6F,0.6F,0.6F);
+                                        ResourceLocation F = new ResourceLocation("chatimg", "imgs/" + imgID);
+                                        RenderSystem.color4f(0.6F, 0.6F, 0.6F, 0.6F);
                                         this.mc.getTextureManager().bindTexture(F);
-                                        blit(p_238492_1_,0, indexY-img.getHeight()+9 , 0, 0, img.getWidth(), img.getHeight(), img.getWidth(), img.getHeight());
-                                        //addScrollPos((int)(img.getHeight()/9));
-                                        //System.out.println("g");
+                                        blit(p_238492_1_, 0, indexY - img.getHeight() + 9, 0, 0, img.getWidth(), img.getHeight(), img.getWidth(), img.getHeight());
+                                        //
                                         p_238492_1_.pop();
                                         RenderSystem.disableAlphaTest();
                                         RenderSystem.disableBlend();
-                                        indexY-=img.getHeight();
+                                        indexY -= img.getHeight();
+                                        int i1 = MathHelper.floor((double) this.getChatWidth() / this.getScale());
+                                        List<IReorderingProcessor> list = RenderComponentsUtil.func_238505_a_(chatLines.get(u + this.scrollPos).getLineString(), i1, this.mc.fontRenderer);
+                                        //System.out.println(list.size());
+                                        for (IReorderingProcessor iReorderingProcessor : list) {
+                                            p_238492_1_.push();
+                                            p_238492_1_.translate(0.0D, 0.0D, 50.0D);
+                                            fill(p_238492_1_, -2, indexY, k + 4, indexY + 9, i2 << 24);
+                                            RenderSystem.enableBlend();
+                                            p_238492_1_.translate(0.0D, 0.0D, 50.0D);
+                                            this.mc.fontRenderer.drawTextWithShadow(p_238492_1_, iReorderingProcessor, 0.0F, indexY, 16777215 + (l1 << 24));
+                                            p_238492_1_.pop();
+                                            RenderSystem.disableAlphaTest();
+                                            RenderSystem.disableBlend();
+                                            indexY -= 9;
+                                        }
+
 
                                     }
                                 }catch (Exception e) {
-                                    int j2 = 0;
                                     p_238492_1_.push();
                                     p_238492_1_.translate(0.0D, 0.0D, 50.0D);
                                     fill(p_238492_1_, -2,indexY, k + 4, indexY+9, i2 << 24);

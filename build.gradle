@@ -16,7 +16,7 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'top.ncserver'
-version = '1.0-SNAPSHOT'
+version = '1.1'
 
 java {
     archivesBaseName = 'chatImg'
@@ -146,6 +146,7 @@ dependencies {
 
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
+    archiveFileName = 'chatimg'
     manifest {
         attributes([
                 "Specification-Title"     : "chatimg",
@@ -158,9 +159,17 @@ jar {
         ])
     }
 }
+task Outjar(type: Jar) {
+    from(sourceSets.main.output)
+    destinationDir = file("$rootDir/build/mods")
+    archivesBaseName = archivesBaseName + '-1.16.5'
+}
 
-jar.finalizedBy('reobfJar')
 
+artifacts {
+    archives Outjar
+
+}
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
