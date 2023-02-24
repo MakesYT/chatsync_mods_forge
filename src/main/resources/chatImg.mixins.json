@@ -8,6 +8,8 @@
 
   ],
   "client": [
+    "ChatScreen",
+    "Clipboard",
     "NewChatGui"
   ],
   "injectors": {

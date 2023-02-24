@@ -1,12 +1,9 @@
 package top.ncserver.chatimg.Tools.mixin;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.CommandSuggestionHelper;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
@@ -14,14 +11,15 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(net.minecraft.client.gui.screen.ChatScreen.class)
 public abstract class ChatScreen extends Screen {
     @Shadow
-    protected TextFieldWidget inputField;
+    protected TextFieldWidget input;
     @Shadow
-    private CommandSuggestionHelper commandSuggestionHelper;
+    private CommandSuggestionHelper commandSuggestions;
     @Shadow
-    private String defaultInputFieldText = "";
+    private String initial = "";
 
-    protected ChatScreen(ITextComponent titleIn) {
-        super(titleIn);
+    protected ChatScreen(String p_i1024_1_) {
+        super(NarratorChatListener.NO_TITLE);
+        this.initial = p_i1024_1_;
     }
     /**
      * @author
@@ -41,8 +39,8 @@ public abstract class ChatScreen extends Screen {
             delta = -1.0D;
         }
 
-        if (!this.commandSuggestionHelper.onScroll(delta)) {
-            this.minecraft.ingameGUI.getChatGUI().addScrollPos(delta);
+        if (!this.commandSuggestions.mouseScrolled(delta)) {
+            this.minecraft.gui.getChat().scrollChat(delta);
         }
         return true;
     }

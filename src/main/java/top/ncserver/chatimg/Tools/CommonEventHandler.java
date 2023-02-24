@@ -10,4 +10,5 @@ public class CommonEventHandler {
     public static void onCommonSetup(FMLCommonSetupEvent event) {
         event.enqueueWork(Networking::registerMessage);
     }
+
 }

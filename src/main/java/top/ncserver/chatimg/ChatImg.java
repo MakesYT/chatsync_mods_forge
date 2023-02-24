@@ -1,12 +1,9 @@
 package top.ncserver.chatimg;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -16,17 +13,26 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.system.APIUtil;
+import org.lwjgl.system.Library;
+import org.lwjgl.system.SharedLibrary;
+import org.lwjgl.system.windows.User32;
 import top.ncserver.chatimg.Tools.Img;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("chatimg")
 public class ChatImg {
+    private static final SharedLibrary USER32 = Library.loadNative(User32.class, "user32");
+    private static final long CountClipboardFormats = APIUtil.apiGetFunctionAddress(USER32, "CountClipboardFormats");
+    private static final long GetClipboardData = APIUtil.apiGetFunctionAddress(USER32, "GetClipboardData");
+    private static final long EnumClipboardFormats = APIUtil.apiGetFunctionAddress(USER32, "EnumClipboardFormats");
     private static final Logger LOGGER = LogManager.getLogger();
-    public static Map<Integer, Img> imgMap=new LinkedHashMap<Integer, Img>();
+    public static Map<Integer, Img> imgMap = new LinkedHashMap<Integer, Img>();
+
     public ChatImg() {
         // Register the setup method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -39,49 +45,34 @@ public class ChatImg {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
+
     }
 
     private void setup(final FMLCommonSetupEvent event) {
 
 
-
-        // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
-    }
-    @SubscribeEvent
-    public void chatEvent(ServerChatEvent event) {
-        //Minecraft.getInstance().ingameGUI.getChatGUI().getChatHeight()
-        System.out.println("Item picked up!");
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
-        LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
-        // some example code to dispatch IMC to another mod
-        InterModComms.sendTo("chatImg", "helloworld", () -> {
-            LOGGER.info("Hello world from the MDK");
-            return "Hello world";
-        });
+
     }
 
     private void processIMC(final InterModProcessEvent event) {
         // some example code to receive and process InterModComms from other mods
-        LOGGER.info("Got IMC {}", event.getIMCStream().
-                map(m -> m.getMessageSupplier().get()).
-                collect(Collectors.toList()));
+
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(FMLServerStartingEvent event) {
         // do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
 
+    }
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -89,7 +80,7 @@ public class ChatImg {
         @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
             // register a new block here
-            LOGGER.info("HELLO from Register Block");
+
         }
     }
 }

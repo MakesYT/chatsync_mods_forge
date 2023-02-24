@@ -2,24 +2,19 @@ package top.ncserver.chatimg.Tools;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.network.NetworkEvent;
-import org.apache.commons.codec.Decoder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.ncserver.chatimg.ChatImg;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.UUID;
 import java.util.function.Supplier;
 
 
@@ -66,10 +61,10 @@ public class SendPack {
                             b[i] += 256;
                         }
                     }
-                    NativeImage nativeImage=NativeImage.read(new ByteArrayInputStream(b));
-                    img.setWidthAndHeight(nativeImage.getWidth(),nativeImage.getHeight());
-                    ChatImg.imgMap.replace(imgID,img);
-                    Minecraft.getInstance().getTextureManager().loadTexture(F,new DynamicTexture(nativeImage));
+                    NativeImage nativeImage = NativeImage.read(new ByteArrayInputStream(b));
+                    img.setWidthAndHeight(nativeImage.getWidth(), nativeImage.getHeight());
+                    ChatImg.imgMap.replace(imgID, img);
+                    Minecraft.getInstance().getTextureManager().register(F, new DynamicTexture(nativeImage));
 
                 }
 
