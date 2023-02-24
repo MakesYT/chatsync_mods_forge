@@ -146,7 +146,8 @@ dependencies {
 
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
-    archiveFileName = 'chatimg'
+
+    archiveFileName = '[forge]chatimg-1.16.5-' + version + '.jar'
     manifest {
         attributes([
                 "Specification-Title"     : "chatimg",
