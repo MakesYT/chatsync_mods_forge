@@ -30,12 +30,12 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.5.1
-          arguments: Outjar
+          arguments: build
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           generate_release_notes: true
-          files: ${{ github.workspace }}/build/mods/*.jar
+          files: ${{ github.workspace }}/build/libs/*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.AC_KEY }}

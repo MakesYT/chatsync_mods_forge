@@ -15,7 +15,7 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'top.ncserver'
-version = '1.2'
+version = '1.2.1'
 
 java {
     archivesBaseName = 'chatImg'
