@@ -15,7 +15,7 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'top.ncserver'
-version = '1.2.1'
+version = '1.2.1.1'
 
 java {
     archivesBaseName = 'chatImg'
@@ -147,7 +147,7 @@ dependencies {
 // Example for how to get properties into the manifest for reading at runtime.
 jar {
 
-    archiveFileName = '[forge]chatimg-1.16.5-' + version + '.jar'
+    archiveFileName = "[forge]chatimg-1.16.5-" + version + ".jar"
     manifest {
         attributes([
                 "Specification-Title"     : "chatimg",

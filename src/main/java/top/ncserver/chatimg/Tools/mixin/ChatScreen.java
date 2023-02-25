@@ -15,16 +15,14 @@ public abstract class ChatScreen extends Screen {
     @Shadow
     private CommandSuggestionHelper commandSuggestions;
     @Shadow
-    private String initial = "";
+    private String initial;
 
-    protected ChatScreen(String p_i1024_1_) {
+    public ChatScreen(String p_i1024_1_) {
         super(NarratorChatListener.NO_TITLE);
         this.initial = p_i1024_1_;
     }
-    /**
-     * @author
-     * @reason
-     */
+
+
     /**
      * @author
      * @reason
