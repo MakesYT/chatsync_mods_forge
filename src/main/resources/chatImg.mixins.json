@@ -3,12 +3,12 @@
   "minVersion": "0.8",
   "package": "top.ncserver.chatimg.Tools.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "chatimg.refmap.json",
+  "refmap": "chatImg.refmap.json",
   "mixins": [
-
   ],
   "client": [
     "ChatScreen",
+    "ClipboardMixin",
     "NewChatGui"
   ],
   "injectors": {
