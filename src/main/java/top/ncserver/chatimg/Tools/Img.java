@@ -1,12 +1,10 @@
 package top.ncserver.chatimg.Tools;
 
-import net.minecraft.util.ResourceLocation;
-import org.lwjgl.system.CallbackI;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 
 public class Img {

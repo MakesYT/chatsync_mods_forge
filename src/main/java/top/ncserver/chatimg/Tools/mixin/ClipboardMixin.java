@@ -2,24 +2,29 @@ package top.ncserver.chatimg.Tools.mixin;
 
 
 import com.google.gson.Gson;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.coobird.thumbnailator.Thumbnails;
 import net.minecraft.client.KeyboardListener;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.ncserver.chatimg.Tools.ImgJson;
-import top.ncserver.chatimg.Tools.Networking;
-import top.ncserver.chatimg.Tools.SendPack;
 import top.ncserver.chatimg.Tools.dll.ClipboardImage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
+
+import static top.ncserver.chatimg.Tools.CommonEventHandler.channel;
 
 
 /**
@@ -86,7 +91,11 @@ public class ClipboardMixin {
                             imgJson.setData(i, split[i]);
                             String s = new Gson().toJson(imgJson);
                             System.out.println(s);
-                            Networking.INSTANCE.sendToServer(new SendPack(s));
+                            byte[] array = s.getBytes(StandardCharsets.UTF_8); // 你要发送的消息的 byte 数组
+                            ByteBuf buf = Unpooled.wrappedBuffer(array);
+                            FMLProxyPacket packet = new FMLProxyPacket(new PacketBuffer(buf), "chatimg"); // 数据包
+                            channel.sendToServer(packet);
+
                         }
 
                     }).run();
