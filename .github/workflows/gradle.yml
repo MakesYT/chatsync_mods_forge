@@ -18,7 +18,7 @@ permissions:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v3
@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '8'
-          distribution: 'temurin'
+          distribution: 'AdoptOpenJDK'
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.5.1
