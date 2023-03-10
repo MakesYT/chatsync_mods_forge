@@ -36,6 +36,6 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           generate_release_notes: true
-          files: ${{ github.workspace }}/build/libs/*.jar
+          files: ${{ github.workspace }}\build\libs\*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.AC_KEY }}
