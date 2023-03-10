@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '8'
-          distribution: 'AdoptOpenJDK'
+          distribution: 'adopt'
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.5.1
