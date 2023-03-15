@@ -1,6 +1,10 @@
 package top.ncserver.chatimg.Tools.mixin;
 
 
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Overwrite;
+import org.spongepowered.asm.mixin.Shadow;
+
 @Mixin(net.minecraft.client.gui.screen.ChatScreen.class)
 public abstract class ChatScreen extends Screen {
     @Shadow
