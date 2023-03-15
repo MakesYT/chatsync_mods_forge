@@ -5,10 +5,10 @@ import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.coobird.thumbnailator.Thumbnails;
-import net.minecraft.client.KeyboardListener;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -32,7 +32,7 @@ import static top.ncserver.chatimg.Tools.CommonEventHandler.channel;
  *
  * @author kitUIN
  */
-@Mixin(KeyboardListener.class)
+@Mixin(GuiScreen.class)
 public class ClipboardMixin {
 
     private static boolean isWindows() {
@@ -54,31 +54,32 @@ public class ClipboardMixin {
         }
     }
 
-    @Inject(at = @At("RETURN"), method = "getClipboard", cancellable = true)
-    public void getClipboard(CallbackInfoReturnable<String> cir) {
+    @Inject(at = @At("RETURN"), method = "getClipboardString", cancellable = true)
+    private void getClipboard(CallbackInfoReturnable<String> cir) {
         if (isWindows()) {
-            try {
-                // Minecraft.getInstance().player.sendMessage(new StringTextComponent("获取图片"),UUID.randomUUID());
-                ClipboardImage clipboardImage = new ClipboardImage();
-                byte[] imageData = clipboardImage.getImageData();
-                if (imageData != null) {
+            new Thread(() -> {
+                try {
+                    // Minecraft.getInstance().player.sendMessage(new StringTextComponent("获取图片"),UUID.randomUUID());
+                    ClipboardImage clipboardImage = new ClipboardImage();
+                    byte[] imageData = clipboardImage.getImageData();
+                    if (imageData != null) {
 
-                    BufferedImage image = Thumbnails.of(ImageIO.read(new ByteArrayInputStream(imageData)))
-                            .scale(1f) //按比例放大缩小 和size() 必须使用一个 不然会报错
-                            .outputQuality(0.5f)    //输出的图片质量  0~1 之间,否则报错
-                            .asBufferedImage();
-                    cir.setReturnValue("");
-                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("图片发送中...."), UUID.randomUUID());
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write(image, "png", baos);
-                    byte[] bytes = baos.toByteArray();
-                    // Encode byte array to base64 string
-                    String base64 = Base64.getEncoder().encodeToString(bytes);
-                    // Print base64 string
-                    ((Runnable) () -> {
-                        int length = 4096;
+                        BufferedImage image = Thumbnails.of(ImageIO.read(new ByteArrayInputStream(imageData)))
+                                .scale(1f) //按比例放大缩小 和size() 必须使用一个 不然会报错
+                                .outputQuality(0.5f)    //输出的图片质量  0~1 之间,否则报错
+                                .asBufferedImage();
+                        cir.setReturnValue("");
+                        Minecraft.getMinecraft().player.sendMessage(new TextComponentString("图片发送中...."));
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        ImageIO.write(image, "png", baos);
+                        byte[] bytes = baos.toByteArray();
+                        // Encode byte array to base64 string
+                        String base64 = Base64.getEncoder().encodeToString(bytes);
+                        // Print base64 string
+
+                        int length = 1024 * 30;
                         int n = (base64.length() + length - 1) / length; //获取整个字符串可以被切割成字符子串的个数
-                        ImgJson imgJson = new ImgJson(UUID.randomUUID().toString(), n, Minecraft.getInstance().player.getDisplayName().getString());
+                        ImgJson imgJson = new ImgJson(UUID.randomUUID().toString(), n, Minecraft.getMinecraft().player.getDisplayName().getUnformattedComponentText());
                         String[] split = new String[n];
                         for (int i = 0; i < n; i++) {
                             if (i < (n - 1)) {
@@ -97,13 +98,15 @@ public class ClipboardMixin {
                             channel.sendToServer(packet);
 
                         }
+                        Minecraft.getMinecraft().player.sendMessage(new TextComponentString("图片数据包发送完成,总计" + n + "个数据包,等待服务器回传"));
 
-                    }).run();
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            }).start();
         }
     }
 }
