@@ -30,19 +30,15 @@ jobs:
       - uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.5.1
-          arguments: build
-      - uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: 7.5.1
           arguments: reobfShadowJar
       - name: Run a cmd script
-        run: tree ${{ github.workspace }}
+        run: tree /F /A ${{ github.workspace }}
         shell: cmd
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           generate_release_notes: true
-          files: ${{ github.workspace }}\\build\\libs\\*.jar
+          files: ${{ github.workspace }}\build\libs\*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.AC_KEY }}
