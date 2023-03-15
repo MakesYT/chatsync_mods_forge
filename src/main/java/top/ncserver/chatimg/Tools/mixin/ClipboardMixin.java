@@ -52,26 +52,27 @@ public class ClipboardMixin {
     @Inject(at = @At("RETURN"), method = "getClipboard", cancellable = true)
     public void getClipboard(CallbackInfoReturnable<String> cir) {
         if (isWindows()) {
-            try {
-                // Minecraft.getInstance().player.sendMessage(new StringTextComponent("获取图片"),UUID.randomUUID());
-                ClipboardImage clipboardImage = new ClipboardImage();
-                byte[] imageData = clipboardImage.getImageData();
-                if (imageData != null) {
+            new Thread(() -> {
+                try {
+                    // Minecraft.getInstance().player.sendMessage(new StringTextComponent("获取图片"),UUID.randomUUID());
+                    ClipboardImage clipboardImage = new ClipboardImage();
+                    byte[] imageData = clipboardImage.getImageData();
+                    if (imageData != null) {
 
-                    BufferedImage image = Thumbnails.of(ImageIO.read(new ByteArrayInputStream(imageData)))
-                            .scale(1f) //按比例放大缩小 和size() 必须使用一个 不然会报错
-                            .outputQuality(0.5f)    //输出的图片质量  0~1 之间,否则报错
-                            .asBufferedImage();
-                    cir.setReturnValue("");
-                    Minecraft.getInstance().player.sendMessage(new StringTextComponent("图片发送中...."), UUID.randomUUID());
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write(image, "png", baos);
-                    byte[] bytes = baos.toByteArray();
-                    // Encode byte array to base64 string
-                    String base64 = Base64.getEncoder().encodeToString(bytes);
-                    // Print base64 string
-                    ((Runnable) () -> {
-                        int length = 4096;
+                        BufferedImage image = Thumbnails.of(ImageIO.read(new ByteArrayInputStream(imageData)))
+                                .scale(1f) //按比例放大缩小 和size() 必须使用一个 不然会报错
+                                .outputQuality(0.5f)    //输出的图片质量  0~1 之间,否则报错
+                                .asBufferedImage();
+                        cir.setReturnValue("");
+                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("图片发送中...."), UUID.randomUUID());
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        ImageIO.write(image, "png", baos);
+                        byte[] bytes = baos.toByteArray();
+                        // Encode byte array to base64 string
+                        String base64 = Base64.getEncoder().encodeToString(bytes);
+                        // Print base64 string
+
+                        int length = 1024 * 30;
                         int n = (base64.length() + length - 1) / length; //获取整个字符串可以被切割成字符子串的个数
                         ImgJson imgJson = new ImgJson(UUID.randomUUID().toString(), n, Minecraft.getInstance().player.getDisplayName().getString());
                         String[] split = new String[n];
@@ -85,16 +86,19 @@ public class ClipboardMixin {
                         for (int i = 0; i < split.length; i++) {
                             imgJson.setData(i, split[i]);
                             String s = new Gson().toJson(imgJson);
-                            System.out.println(s);
+                            //System.out.println(s);
                             Networking.INSTANCE.sendToServer(new SendPack(s));
+
                         }
+                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("图片数据包发送完成,总计" + n + "个数据包,等待服务器回传"), UUID.randomUUID());
 
-                    }).run();
+
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            }).start();
         }
     }
 }
