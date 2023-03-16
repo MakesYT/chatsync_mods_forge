@@ -2,8 +2,8 @@ package top.ncserver.chatimg.Tools.mixin;
 
 
 import com.google.gson.Gson;
+import com.mojang.blaze3d.platform.ClipboardManager;
 import net.coobird.thumbnailator.Thumbnails;
-import net.minecraft.client.KeyboardListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.StringTextComponent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -27,7 +27,7 @@ import java.util.UUID;
  *
  * @author kitUIN
  */
-@Mixin(KeyboardListener.class)
+@Mixin(ClipboardManager.class)
 public class ClipboardMixin {
 
     private static boolean isWindows() {
@@ -64,7 +64,8 @@ public class ClipboardMixin {
                                 .outputQuality(0.5f)    //输出的图片质量  0~1 之间,否则报错
                                 .asBufferedImage();
                         cir.setReturnValue("");
-                        Minecraft.getInstance().player.sendMessage(new StringTextComponent("图片发送中...."), UUID.randomUUID());
+                        "图片发送中...."
+                        Minecraft.getInstance().player.sendSystemMessage(new Message);
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         ImageIO.write(image, "png", baos);
                         byte[] bytes = baos.toByteArray();
@@ -87,7 +88,7 @@ public class ClipboardMixin {
                             imgJson.setData(i, split[i]);
                             String s = new Gson().toJson(imgJson);
                             //System.out.println(s);
-                            Networking.INSTANCE.sendToServer(new SendPack(s));
+                            Networking.INSTANCE.se(new SendPack(s));
 
                         }
                         Minecraft.getInstance().player.sendMessage(new StringTextComponent("图片数据包发送完成,总计" + n + "个数据包,等待服务器回传"), UUID.randomUUID());

@@ -1,22 +1,24 @@
 package top.ncserver.chatimg.Tools.mixin;
 
-import net.minecraft.client.gui.CommandSuggestionHelper;
-import net.minecraft.client.gui.chat.NarratorChatListener;
-import net.minecraft.client.gui.screen.Screen;
+
+import net.minecraft.client.gui.components.CommandSuggestions;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(net.minecraft.client.gui.screen.ChatScreen.class)
+@Mixin(net.minecraft.client.gui.screens.ChatScreen.class)
 public abstract class ChatScreen extends Screen {
     @Shadow
-    private CommandSuggestionHelper commandSuggestions;
+    CommandSuggestions commandSuggestions;
     @Shadow
     private String initial;
 
-    public ChatScreen(String p_i1024_1_) {
-        super(NarratorChatListener.NO_TITLE);
-        this.initial = p_i1024_1_;
+    public ChatScreen(String p_95579_) {
+        super(Component.translatable("chat_screen.title"));
+        this.initial = p_95579_;
     }
 
 
@@ -25,17 +27,11 @@ public abstract class ChatScreen extends Screen {
      * @reason
      */
     @Overwrite
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        if (delta > 1.0D) {
-            delta = 1.0D;
-        }
+    public boolean mouseScrolled(double p_95581_, double p_95582_, double p_95583_) {
+        p_95583_ = Mth.clamp(p_95583_, -1.0, 1.0);
+        if (!this.commandSuggestions.mouseScrolled(p_95583_)) {
 
-        if (delta < -1.0D) {
-            delta = -1.0D;
-        }
-
-        if (!this.commandSuggestions.mouseScrolled(delta)) {
-            this.minecraft.gui.getChat().scrollChat(delta);
+            this.minecraft.gui.getChat().scrollChat((int) p_95583_);
         }
         return true;
     }

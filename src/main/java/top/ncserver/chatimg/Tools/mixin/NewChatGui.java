@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Mixin(net.minecraft.client.gui.NewChatGui.class)
+@Mixin(.class)
 public abstract class NewChatGui extends AbstractGui {
     @Final
     @Shadow
