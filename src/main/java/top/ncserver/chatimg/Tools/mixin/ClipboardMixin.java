@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import top.ncserver.chatimg.Tools.CommonEventHandler;
 import top.ncserver.chatimg.Tools.ImgJson;
 import top.ncserver.chatimg.Tools.dll.ClipboardImage;
 
@@ -24,8 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.UUID;
 
-import static top.ncserver.chatimg.Tools.CommonEventHandler.channel;
-
 
 /**
  * 注入修改剪切板,支持粘贴图片
@@ -33,7 +32,7 @@ import static top.ncserver.chatimg.Tools.CommonEventHandler.channel;
  * @author kitUIN
  */
 @Mixin(GuiScreen.class)
-public class ClipboardMixin {
+public abstract class ClipboardMixin {
 
     private static boolean isWindows() {
         return System.getProperty("os.name").toUpperCase().contains("WINDOWS");
@@ -55,7 +54,7 @@ public class ClipboardMixin {
     }
 
     @Inject(at = @At("RETURN"), method = "getClipboardString", cancellable = true)
-    private void getClipboard(CallbackInfoReturnable<String> cir) {
+    private static void getClipboard(CallbackInfoReturnable<String> cir) {
         if (isWindows()) {
             new Thread(() -> {
                 try {
@@ -79,7 +78,7 @@ public class ClipboardMixin {
 
                         int length = 1024 * 30;
                         int n = (base64.length() + length - 1) / length; //获取整个字符串可以被切割成字符子串的个数
-                        ImgJson imgJson = new ImgJson(UUID.randomUUID().toString(), n, Minecraft.getMinecraft().player.getDisplayName().getUnformattedComponentText());
+                        ImgJson imgJson = new ImgJson(UUID.randomUUID().toString(), n, Minecraft.getMinecraft().player.getDisplayName().getUnformattedText());
                         String[] split = new String[n];
                         for (int i = 0; i < n; i++) {
                             if (i < (n - 1)) {
@@ -91,11 +90,11 @@ public class ClipboardMixin {
                         for (int i = 0; i < split.length; i++) {
                             imgJson.setData(i, split[i]);
                             String s = new Gson().toJson(imgJson);
-                            System.out.println(s);
+                            //System.out.println(s);
                             byte[] array = s.getBytes(StandardCharsets.UTF_8); // 你要发送的消息的 byte 数组
                             ByteBuf buf = Unpooled.wrappedBuffer(array);
-                            FMLProxyPacket packet = new FMLProxyPacket(new PacketBuffer(buf), "chatimg"); // 数据包
-                            channel.sendToServer(packet);
+                            FMLProxyPacket packet = new FMLProxyPacket(new PacketBuffer(buf), "chatimg:img"); // 数据包
+                            CommonEventHandler.channel.sendToServer(packet);
 
                         }
                         Minecraft.getMinecraft().player.sendMessage(new TextComponentString("图片数据包发送完成,总计" + n + "个数据包,等待服务器回传"));

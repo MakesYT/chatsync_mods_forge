@@ -1,10 +1,13 @@
 package top.ncserver.chatimg;
 
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.ncserver.chatimg.Tools.CommonEventHandler;
 import top.ncserver.chatimg.Tools.Img;
 
 import java.io.File;
@@ -25,6 +28,7 @@ public class ChatImg {
 
     public ChatImg() {
         MinecraftForge.EVENT_BUS.register(this);
+
     }
 
     private static boolean isWindows() {
@@ -48,6 +52,11 @@ public class ChatImg {
 
     @Mod.EventHandler
     private void setup(final FMLPreInitializationEvent event) {
+        MinecraftForge.EVENT_BUS.register(this);
+        FMLCommonHandler.instance().bus().register(this);
+        // 注册通道
+        CommonEventHandler.channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("chatimg:img");
+        CommonEventHandler.channel.register(CommonEventHandler.class);
         if (isWindows()) {
             File dllF = new File("get_clipboard_image.dll");
             if (!dllF.exists()) {

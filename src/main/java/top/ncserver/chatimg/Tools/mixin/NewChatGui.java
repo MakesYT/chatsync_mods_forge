@@ -7,14 +7,19 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
+import top.ncserver.chatimg.ChatImg;
+import top.ncserver.chatimg.Tools.Img;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Mixin(GuiNewChat.class)
 public abstract class NewChatGui extends Gui {
@@ -50,6 +55,30 @@ public abstract class NewChatGui extends Gui {
     @Shadow
     public abstract int getChatWidth();
 
+    @Shadow
+    public abstract int getChatHeight();
+
+    private static final String pattern = "\\[ImgID=(.+)\\]";
+    private static final Pattern patternP = Pattern.compile("\\[ImgID=(.+)\\]");
+
+    /**
+     * @author
+     * @reason
+     */
+    @Overwrite
+    public void scroll(int amount) {
+        this.scrollPos += amount;
+        if (this.scrollPos > this.drawnChatLines.size() - 3) {
+            this.scrollPos = this.drawnChatLines.size() - 3;
+        }
+
+        if (this.scrollPos <= 0) {
+            this.scrollPos = 0;
+            this.isScrolled = false;
+        }
+
+    }
+
     /**
      * @author MakesYT
      * @reason 添加图片显示
@@ -70,40 +99,91 @@ public abstract class NewChatGui extends Gui {
                 GlStateManager.translate(2.0F, 8.0F, 0.0F);
                 GlStateManager.scale(f1, f1, 1.0F);
                 int l = 0;
+                int indexY = (int) ((double) (-this.getLineCount()) * 9) + getChatHeight();
+                for (int u = 0; ; u++) {
+                    if (indexY <= -getChatHeight() || u > this.drawnChatLines.size() - 1 || u + this.scrollPos > this.chatLines.size() - 1) {
+                        break;
+                    }
+                    ++l;
+                    ChatLine chatline = this.drawnChatLines.get(u + this.scrollPos);
+                    int j1 = updateCounter - chatline.getUpdatedCounter();
+                    if (j1 < 200 || flag) {
+                        double d0 = (double) j1 / 200.0D;
+                        d0 = 1.0D - d0;
+                        d0 = d0 * 10.0D;
+                        d0 = MathHelper.clamp(d0, 0.0D, 1.0D);
+                        d0 = d0 * d0;
+                        int l1 = (int) (255.0D * d0);
 
-                for (int i1 = 0; i1 + this.scrollPos < this.drawnChatLines.size() && i1 < i; ++i1) {
-                    ChatLine chatline = this.drawnChatLines.get(i1 + this.scrollPos);
+                        if (flag) {
+                            l1 = 255;
+                        }
 
-                    if (chatline != null) {
-                        int j1 = updateCounter - chatline.getUpdatedCounter();
+                        l1 = (int) ((float) l1 * f);
+                        ++l;
+                        String json = chatline.getChatComponent().getUnformattedText();
+                        if (json.contains("[ImgID=")) {
+                            Matcher matcher = patternP.matcher(json);
+                            int imgID = -1;
+                            try {
+                                if (matcher.find()) {
+                                    imgID = Integer.parseInt((matcher.group(0)).split("=")[1].replace("]", ""));
+                                }
+                                Img img = ChatImg.imgMap.get(imgID);
+                                if (img.allReceived()) {
+                                    drawRect(-2, indexY + 9, k + 4, indexY - img.getHeight() + 9, l1 / 2 << 24);
 
-                        if (j1 < 200 || flag) {
-                            double d0 = (double) j1 / 200.0D;
-                            d0 = 1.0D - d0;
-                            d0 = d0 * 10.0D;
-                            d0 = MathHelper.clamp(d0, 0.0D, 1.0D);
-                            d0 = d0 * d0;
-                            int l1 = (int) (255.0D * d0);
+                                    GlStateManager.enableBlend();
 
-                            if (flag) {
-                                l1 = 255;
-                            }
+                                    //this.mc.fontRenderer.drawTextWithShadow(p_238492_1_, chatline.getLineString(), 0.0F, (float)((int)(d6 + d4)), 16777215 + (l1 << 24));
+                                    ResourceLocation F = new ResourceLocation("chatimg", "imgs/" + imgID);
+                                    GlStateManager.color(0.7F, 0.7F, 0.7F, 0.7F);
+                                    this.mc.getTextureManager().bindTexture(F);
+                                    drawModalRectWithCustomSizedTexture(0, indexY - img.getHeight() + 9, 0, 0, img.getWidth(), img.getHeight(), img.getWidth(), img.getHeight());
 
-                            l1 = (int) ((float) l1 * f);
-                            ++l;
 
-                            if (l1 > 3) {
-                                int j2 = -i1 * 9;
-                                drawRect(-2, j2 - 9, 0 + k + 4, j2, l1 / 2 << 24);
+                                    GlStateManager.disableAlpha();
+                                    GlStateManager.disableBlend();
+                                    indexY -= img.getHeight();
+                                    drawRect(-2, indexY, k + 4, indexY + 9, l1 / 2 << 24);
+                                    String s = chatline.getChatComponent().getFormattedText();
+                                    GlStateManager.enableBlend();
+                                    this.mc.fontRenderer.drawStringWithShadow(s, 0.0F, (float) (indexY), 16777215 + (l1 << 24));
+                                    GlStateManager.disableAlpha();
+                                    GlStateManager.disableBlend();
+                                    indexY -= 9;
+
+
+                                }
+                            } catch (Exception e) {
+
+                                drawRect(-2, indexY, k + 4, indexY + 9, l1 / 2 << 24);
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();
-                                this.mc.fontRenderer.drawStringWithShadow(s, 0.0F, (float) (j2 - 8), 16777215 + (l1 << 24));
+                                this.mc.fontRenderer.drawStringWithShadow(s, 0.0F, (float) (indexY), 16777215 + (l1 << 24));
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
+                                indexY -= 9;
                             }
+                        } else {
+
+                            drawRect(-2, indexY, k + 4, indexY + 9, l1 / 2 << 24);
+                            String s = chatline.getChatComponent().getFormattedText();
+                            GlStateManager.enableBlend();
+                            this.mc.fontRenderer.drawStringWithShadow(s, 0.0F, (float) (indexY), 16777215 + (l1 << 24));
+                            GlStateManager.disableAlpha();
+                            GlStateManager.disableBlend();
+                            indexY -= 9;
                         }
+
+
                     }
                 }
+
+
+                //////////////////////////////////////
+
+                /////////////////////////////////////
 
                 if (flag) {
                     int k2 = this.mc.fontRenderer.FONT_HEIGHT;

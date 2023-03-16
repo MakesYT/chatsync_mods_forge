@@ -3,7 +3,7 @@
   "minVersion": "0.8",
   "package": "top.ncserver.chatimg.Tools.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "chatImg.refmap.json",
+  "refmap": "chatimg.refmap.json",
   "mixins": [
   ],
   "client": [

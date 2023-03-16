@@ -13,6 +13,7 @@ import java.io.IOException;
 @Mixin(GuiChat.class)
 public abstract class ChatScreen extends GuiScreen implements ITabCompleter {
 
+
     /**
      * @author
      * @reason
