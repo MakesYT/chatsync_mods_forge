@@ -29,7 +29,7 @@ jobs:
           distribution: 'adopt'
       - uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 7.5.1
+          gradle-version: 6.8.1
           arguments: build
       - run: gradle.bat reobfShadowJar
         shell: cmd
