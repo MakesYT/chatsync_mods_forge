@@ -1,8 +1,9 @@
-# chatsync_mods_forge
+# chatsync_mods_forge 1.12.2/1.16.5
 
 ![image](https://user-images.githubusercontent.com/42534870/225544104-319af1df-fcd4-410e-a280-da66d39081bb.png)
 
-## 面向开发者的mod规范(一般情况你只需要使用chatsync的三件套即可完成全流程的图片转发以及显示)
+## 面向开发者的mod规范  
+### (一般情况你只需要使用chatsync的三件套即可完成全流程的图片转发以及显示)
 在开始前你需要了解的事  
 1. 所有来自客户端的图片不会由某个客户端直接向其它客户端发送而是经过服务器转发,所以你可以对图片进行任何操作
 1. 图片以base64编码传输
