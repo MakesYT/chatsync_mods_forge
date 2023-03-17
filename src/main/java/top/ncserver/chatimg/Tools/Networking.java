@@ -1,8 +1,8 @@
 package top.ncserver.chatimg.Tools;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 public class Networking {
     public static SimpleChannel INSTANCE;
@@ -18,10 +18,10 @@ public class Networking {
                 (version) -> version.equals(VERSION),
                 (version) -> version.equals(VERSION)
         );
-        INSTANCE.messageBuilder(SendPack.class,ID)
+        INSTANCE.messageBuilder(SendPack.class, ID)
                 .encoder(SendPack::toBytes)
                 .decoder(SendPack::new)
-                .consumer(SendPack::handler)
+                .consumerMainThread(SendPack::handler)
                 .add();
     }
 }

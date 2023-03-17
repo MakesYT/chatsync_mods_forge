@@ -24,7 +24,7 @@ import java.util.Map;
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("chatimg")
 public class ChatImg {
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
     public static Map<Integer, Img> imgMap = new LinkedHashMap<Integer, Img>();
 
     public ChatImg() {

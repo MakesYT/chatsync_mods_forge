@@ -2,14 +2,14 @@
   "required": true,
   "minVersion": "0.8",
   "package": "top.ncserver.chatimg.Tools.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_17",
   "refmap": "chatimg.refmap.json",
   "mixins": [
   ],
   "client": [
+    "ChatComponent",
     "ChatScreen",
-    "ClipboardMixin",
-    "NewChatGui"
+    "ClipboardMixin"
   ],
   "injectors": {
     "defaultRequire": 1

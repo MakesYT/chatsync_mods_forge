@@ -2,12 +2,12 @@ package top.ncserver.chatimg.Tools;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.ncserver.chatimg.ChatImg;
@@ -22,7 +22,7 @@ public class SendPack {
     private final String message;
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public SendPack(PacketBuffer buffer) {
+    public SendPack(FriendlyByteBuf buffer) {
         message = buffer.toString(StandardCharsets.UTF_8);
     }
 
@@ -30,24 +30,24 @@ public class SendPack {
         this.message = message;
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeBytes(this.message.getBytes(StandardCharsets.UTF_8));
     }
+
     public void handler(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            //LOGGER.info(this.message);
-            String json = this.message.substring(this.message.indexOf("{"));
-            json = json.substring(0, this.message.lastIndexOf("}")+1);
+            LOGGER.debug(this.message);
+            String json = this.message;
             //System.out.println(json);
             try {
                 JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
-                int imgID=jsonObject.get("id").getAsInt();
-                if (ChatImg.imgMap.containsKey(imgID)){
-                    Img img= ChatImg.imgMap.get(imgID);
-                    img.add(jsonObject.get("index").getAsInt(),jsonObject.get("data").getAsString());
-                    ChatImg.imgMap.replace(imgID,img);
-                }else {
-                    Img img=new Img(jsonObject.get("packageNum").getAsInt(),jsonObject.get("index").getAsInt(),jsonObject.get("data").getAsString());
+                int imgID = jsonObject.get("id").getAsInt();
+                if (ChatImg.imgMap.containsKey(imgID)) {
+                    Img img = ChatImg.imgMap.get(imgID);
+                    img.add(jsonObject.get("index").getAsInt(), jsonObject.get("data").getAsString());
+                    ChatImg.imgMap.replace(imgID, img);
+                } else {
+                    Img img = new Img(jsonObject.get("packageNum").getAsInt(), jsonObject.get("index").getAsInt(), jsonObject.get("data").getAsString());
                     ChatImg.imgMap.put(imgID,img);
                 }
                 Img img= ChatImg.imgMap.get(imgID);
@@ -64,11 +64,14 @@ public class SendPack {
                     NativeImage nativeImage = NativeImage.read(new ByteArrayInputStream(b));
                     img.setWidthAndHeight(nativeImage.getWidth(), nativeImage.getHeight());
                     ChatImg.imgMap.replace(imgID, img);
+                    LOGGER.debug(String.valueOf(imgID));
                     Minecraft.getInstance().getTextureManager().register(F, new DynamicTexture(nativeImage));
 
                 }
 
-            }catch (Exception e) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
         ctx.get().setPacketHandled(true);
     }
