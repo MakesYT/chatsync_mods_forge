@@ -1,4 +1,4 @@
-# chatsync_mods_forge 1.12.2/1.16.5
+# chatsync_mods_forge 1.12.2/1.16.5/1.19.2
 
 ![image](https://user-images.githubusercontent.com/42534870/225544104-319af1df-fcd4-410e-a280-da66d39081bb.png)
 
