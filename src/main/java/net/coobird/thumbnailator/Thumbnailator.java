@@ -25,13 +25,11 @@
 package net.coobird.thumbnailator;
 
 import net.coobird.thumbnailator.builders.BufferedImageBuilder;
-import net.coobird.thumbnailator.builders.ThumbnailParameterBuilder;
 import net.coobird.thumbnailator.filters.ImageFilter;
 import net.coobird.thumbnailator.filters.Pipeline;
 import net.coobird.thumbnailator.filters.SwapDimensions;
 import net.coobird.thumbnailator.makers.FixedSizeThumbnailMaker;
 import net.coobird.thumbnailator.makers.ScaledThumbnailMaker;
-import net.coobird.thumbnailator.name.Rename;
 import net.coobird.thumbnailator.resizers.DefaultResizerFactory;
 import net.coobird.thumbnailator.resizers.Resizer;
 import net.coobird.thumbnailator.tasks.ThumbnailTask;
@@ -42,9 +40,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -371,108 +366,6 @@ public final class Thumbnailator {
                 .size(width, height)
                 .outputFormat(format)
                 .toOutputStream(os);
-    }
-
-    /**
-     * Creates thumbnails from a specified {@link Collection} of {@link File}s.
-     * The filenames of the resulting thumbnails are determined by applying
-     * the specified {@link Rename}.
-     * <p>
-     * The order of the thumbnail {@code File}s in the returned
-     * {@code Collection} will be the same as the order as the source list.
-     *
-     * @param files  A {@code Collection} containing {@code File} objects
-     *               of image files.
-     * @param rename The renaming function to use.
-     * @param width  The width of the thumbnail.
-     * @param height The height of the thumbnail.
-     * @return A collection of {@code File}s to the thumbnails.
-     * @throws IOException Thrown when a problem occurs when reading from
-     *                     {@code File} representing an image file.
-     * @deprecated This method has been deprecated in favor of using the
-     * {@link Thumbnails#fromFiles(Iterable)} interface.
-     * This method will be removed in 0.5.0, and will not be
-     * further maintained.
-     */
-    public static Collection<File> createThumbnailsAsCollection(
-            Collection<? extends File> files,
-            Rename rename,
-            int width,
-            int height
-    ) throws IOException {
-
-        validateDimensions(width, height);
-
-        if (files == null) {
-            throw new NullPointerException("Collection of Files is null.");
-        }
-        if (rename == null) {
-            throw new NullPointerException("Rename is null.");
-        }
-
-        ArrayList<File> resultFiles = new ArrayList<File>();
-
-        ThumbnailParameter param =
-                new ThumbnailParameterBuilder()
-                        .size(width, height)
-                        .build();
-
-        for (File inFile : files) {
-            File outFile =
-                    new File(inFile.getParent(), rename.apply(inFile.getName(), param));
-
-            createThumbnail(inFile, outFile, width, height);
-
-            resultFiles.add(outFile);
-        }
-
-        return Collections.unmodifiableList(resultFiles);
-    }
-
-    /**
-     * Creates thumbnails from a specified {@code Collection} of {@code File}s.
-     * The filenames of the resulting thumbnails are determined by applying
-     * the specified {@code Rename} function.
-     *
-     * @param files  A {@code Collection} containing {@code File} objects
-     *               of image files.
-     * @param rename The renaming function to use.
-     * @param width  The width of the thumbnail.
-     * @param height The height of the thumbnail.
-     * @throws IOException Thrown when a problem occurs when reading from
-     *                     {@code File} representing an image file.
-     * @deprecated This method has been deprecated in favor of using the
-     * {@link Thumbnails#fromFiles(Iterable)} interface.
-     * This method will be removed in 0.5.0, and will not be
-     * further maintained.
-     */
-    public static void createThumbnails(
-            Collection<? extends File> files,
-            Rename rename,
-            int width,
-            int height
-    ) throws IOException {
-
-        validateDimensions(width, height);
-
-        if (files == null) {
-            throw new NullPointerException("Collection of Files is null.");
-        }
-        if (rename == null) {
-            throw new NullPointerException("Rename is null.");
-        }
-
-        ThumbnailParameter param =
-                new ThumbnailParameterBuilder()
-                        .size(width, height)
-                        .build();
-
-        for (File inFile : files) {
-            File outFile =
-                    new File(inFile.getParent(), rename.apply(inFile.getName(), param));
-
-            createThumbnail(inFile, outFile, width, height);
-        }
     }
 
     /**
