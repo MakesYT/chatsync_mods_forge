@@ -2,6 +2,8 @@
 
 ![image](https://user-images.githubusercontent.com/42534870/225544104-319af1df-fcd4-410e-a280-da66d39081bb.png)
 
+## 主项目页面 https://github.com/MakesYT/chatsync
+
 ## 面向开发者的mod规范  
 ### (一般情况你只需要使用chatsync的三件套即可完成全流程的图片转发以及显示)
 在开始前你需要了解的事  
