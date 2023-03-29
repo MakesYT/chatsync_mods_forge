@@ -145,35 +145,17 @@ public abstract class NewChatGui extends Gui {
                                     GlStateManager.disableAlpha();
                                     GlStateManager.disableBlend();
                                     indexY -= img.getHeight();
-                                    drawRect(-2, indexY, k + 4, indexY + 9, l1 / 2 << 24);
-                                    String s = chatline.getChatComponent().getFormattedText();
-                                    GlStateManager.enableBlend();
-                                    this.mc.fontRenderer.drawStringWithShadow(s, 0.0F, (float) (indexY), 16777215 + (l1 << 24));
-                                    GlStateManager.disableAlpha();
-                                    GlStateManager.disableBlend();
-                                    indexY -= 9;
+                                    indexY = drawString(k, indexY, chatline, l1);
 
 
                                 }
                             } catch (Exception e) {
 
-                                drawRect(-2, indexY, k + 4, indexY + 9, l1 / 2 << 24);
-                                String s = chatline.getChatComponent().getFormattedText();
-                                GlStateManager.enableBlend();
-                                this.mc.fontRenderer.drawStringWithShadow(s, 0.0F, (float) (indexY), 16777215 + (l1 << 24));
-                                GlStateManager.disableAlpha();
-                                GlStateManager.disableBlend();
-                                indexY -= 9;
+                                indexY = drawString(k, indexY, chatline, l1);
                             }
                         } else {
 
-                            drawRect(-2, indexY, k + 4, indexY + 9, l1 / 2 << 24);
-                            String s = chatline.getChatComponent().getFormattedText();
-                            GlStateManager.enableBlend();
-                            this.mc.fontRenderer.drawStringWithShadow(s, 0.0F, (float) (indexY), 16777215 + (l1 << 24));
-                            GlStateManager.disableAlpha();
-                            GlStateManager.disableBlend();
-                            indexY -= 9;
+                            indexY = drawString(k, indexY, chatline, l1);
                         }
 
 
@@ -181,9 +163,6 @@ public abstract class NewChatGui extends Gui {
                 }
 
 
-                //////////////////////////////////////
-
-                /////////////////////////////////////
 
                 if (flag) {
                     int k2 = this.mc.fontRenderer.FONT_HEIGHT;
@@ -204,5 +183,16 @@ public abstract class NewChatGui extends Gui {
                 GlStateManager.popMatrix();
             }
         }
+    }
+
+    private int drawString(int k, int indexY, ChatLine chatline, int l1) {
+        drawRect(-2, indexY, k + 4, indexY + 9, l1 / 2 << 24);
+        String s = chatline.getChatComponent().getFormattedText();
+        GlStateManager.enableBlend();
+        this.mc.fontRenderer.drawStringWithShadow(s, 0.0F, (float) (indexY), 16777215 + (l1 << 24));
+        GlStateManager.disableAlpha();
+        GlStateManager.disableBlend();
+        indexY -= 9;
+        return indexY;
     }
 }

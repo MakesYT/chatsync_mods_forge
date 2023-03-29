@@ -29,28 +29,13 @@ import java.util.UUID;
 /**
  * 注入修改剪切板,支持粘贴图片
  *
- * @author kitUIN
+ * @author MakesYT
  */
 @Mixin(GuiScreen.class)
 public abstract class ClipboardMixin {
 
     private static boolean isWindows() {
         return System.getProperty("os.name").toUpperCase().contains("WINDOWS");
-    }
-
-    private static void copyFile(InputStream inputStream, File file) {
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            byte[] arrayOfByte = new byte[63];
-            int i;
-            while ((i = inputStream.read(arrayOfByte)) > 0) {
-                fileOutputStream.write(arrayOfByte, 0, i);
-            }
-            fileOutputStream.close();
-            inputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Inject(at = @At("RETURN"), method = "getClipboardString", cancellable = true)
