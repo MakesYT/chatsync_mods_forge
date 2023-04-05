@@ -5,6 +5,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.ncserver.chatimg.Tools.CommonEventHandler;
@@ -25,7 +26,7 @@ import java.util.Map;
 public class ChatImg {
     private static final Logger LOGGER = LogManager.getLogger();
     public static Map<Integer, Img> imgMap = new LinkedHashMap<Integer, Img>();
-
+    public static int ImgID = 0;
     public ChatImg() {
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -53,27 +54,27 @@ public class ChatImg {
     @Mod.EventHandler
     private void setup(final FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(this);
-        FMLCommonHandler.instance().bus().register(this);
         // 注册通道
         CommonEventHandler.channel = NetworkRegistry.INSTANCE.newEventDrivenChannel("chatimg:img");
         CommonEventHandler.channel.register(CommonEventHandler.class);
-        if (isWindows()) {
-            File dllF = new File("get_clipboard_image.dll");
-            if (!dllF.exists()) {
-                try {
-                    URL url = this.getClass().getClassLoader().getResource("get_clipboard_image.dll");
-                    if (url != null) {
-                        URLConnection connection = url.openConnection();
-                        connection.setUseCaches(false);
-                        copyFile(connection.getInputStream(), dllF);
+        if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
+            if (isWindows()) {
+                File dllF = new File("get_clipboard_image.dll");
+                if (!dllF.exists()) {
+                    try {
+                        URL url = this.getClass().getClassLoader().getResource("get_clipboard_image.dll");
+                        if (url != null) {
+                            URLConnection connection = url.openConnection();
+                            connection.setUseCaches(false);
+                            copyFile(connection.getInputStream(), dllF);
+                        }
+                    } catch (IOException var4) {
+
                     }
-                } catch (IOException var4) {
 
                 }
-
+                System.load(dllF.getAbsolutePath());
             }
-            System.load(dllF.getAbsolutePath());
-        }
 
     }
 
