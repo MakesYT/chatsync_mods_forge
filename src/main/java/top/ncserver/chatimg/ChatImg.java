@@ -26,7 +26,7 @@ import java.util.Map;
 public class ChatImg {
     private static final Logger LOGGER = LogManager.getLogger();
     public static Map<Integer, Img> imgMap = new LinkedHashMap<Integer, Img>();
-    public static int ImgID = 0;
+
     public ChatImg() {
         MinecraftForge.EVENT_BUS.register(this);
 
