@@ -15,8 +15,8 @@ public class Networking {
         INSTANCE = NetworkRegistry.newSimpleChannel(
                 new ResourceLocation("chatimg", "img"),
                 () -> VERSION,
-                (version) -> version.equals(VERSION),
-                (version) -> version.equals(VERSION)
+                (version) -> true,
+                (version) -> true
         );
         INSTANCE.messageBuilder(SendPack.class,ID)
                 .encoder(SendPack::toBytes)

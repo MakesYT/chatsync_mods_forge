@@ -3,10 +3,13 @@ package top.ncserver.chatimg.Tools.mixin;
 import net.minecraft.client.gui.CommandSuggestionHelper;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 
+@OnlyIn(Dist.CLIENT)
 @Mixin(net.minecraft.client.gui.screen.ChatScreen.class)
 public abstract class ChatScreen extends Screen {
     @Shadow

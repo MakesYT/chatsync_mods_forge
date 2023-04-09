@@ -6,6 +6,8 @@ import net.coobird.thumbnailator.Thumbnails;
 import net.minecraft.client.KeyboardListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,11 +24,7 @@ import java.util.Base64;
 import java.util.UUID;
 
 
-/**
- * 注入修改剪切板,支持粘贴图片
- *
- * @author kitUIN
- */
+@OnlyIn(Dist.CLIENT)
 @Mixin(KeyboardListener.class)
 public class ClipboardMixin {
 
