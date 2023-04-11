@@ -3,11 +3,11 @@ package top.ncserver.chatimg;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.ncserver.chatimg.Tools.Img;
@@ -55,7 +55,7 @@ public class ChatImg {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        if (Dist.CLIENT.isClient() && isWindows()) {
+        if (FMLEnvironment.dist == Dist.CLIENT && isWindows()) {
             File dllF = new File("get_clipboard_image.dll");
             if (!dllF.exists()) {
                 try {
@@ -73,9 +73,6 @@ public class ChatImg {
             System.load(dllF.getAbsolutePath());
         }
 
-    }
-
-    private void doClientStuff(final FMLClientSetupEvent event) {
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
