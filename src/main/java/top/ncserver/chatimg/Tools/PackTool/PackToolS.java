@@ -3,10 +3,10 @@ package top.ncserver.chatimg.Tools.PackTool;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import top.ncserver.chatimg.Tools.Img;
 import top.ncserver.chatimg.Tools.ImgJsonSTC;
 import top.ncserver.chatimg.Tools.Networking;
@@ -58,7 +58,7 @@ public class PackToolS {
                             split[i] = base64.substring(i * length);
                         }
                     }
-                    List<ServerPlayerEntity> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
+                    List<ServerPlayer> players = ServerLifecycleHooks.getCurrentServer().getPlayerList().getPlayers();
                     for (int i = 0; i < split.length; i++) {
                         imgJson.setData(i, split[i]);
                         String s = new Gson().toJson(imgJson);
@@ -67,8 +67,8 @@ public class PackToolS {
 
 
                     }
-                    for (ServerPlayerEntity player : players) {
-                        player.sendMessage(new StringTextComponent("[" + jsonObject.get("sender").getAsString() + "]:" + "[ImgID=" + imgId + "]"), UUID.randomUUID());
+                    for (ServerPlayer player : players) {
+                        player.sendMessage(new TextComponent("[" + jsonObject.get("sender").getAsString() + "]:" + "[ImgID=" + imgId + "]"), UUID.randomUUID());
                     }
                 }
             } catch (Exception e) {

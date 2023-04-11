@@ -1,16 +1,16 @@
 package top.ncserver.chatimg.Tools.mixin;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.GuiMessage;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.ChatLine;
-import net.minecraft.client.gui.RenderComponentsUtil;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.spongepowered.asm.mixin.Final;
@@ -26,24 +26,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @OnlyIn(Dist.CLIENT)
-@Mixin(net.minecraft.client.gui.NewChatGui.class)
-public abstract class NewChatGui extends AbstractGui {
+@Mixin(net.minecraft.client.gui.components.ChatComponent.class)
+public abstract class NewChatGui extends GuiComponent {
     @Final
     @Shadow
     private Minecraft minecraft;
     @Final
     @Shadow
-    private List<ChatLine<IReorderingProcessor>> trimmedMessages;
+    private List<GuiMessage<FormattedCharSequence>> trimmedMessages;
     @Shadow
     private int chatScrollbarPos;
     @Shadow
     @Final
-    private Deque<ITextComponent> chatQueue;
+    private Deque<Component> chatQueue;
     @Shadow
     private boolean newMessageSinceScroll;
     @Shadow
     @Final
-    private List<ChatLine<ITextComponent>> allMessages;
+    private List<GuiMessage<Component>> allMessages;
 
     /**
      * @author
@@ -54,7 +54,7 @@ public abstract class NewChatGui extends AbstractGui {
         double d0 = (double) counterIn / 200.0D;
         d0 = 1.0D - d0;
         d0 = d0 * 10.0D;
-        d0 = MathHelper.clamp(d0, 0.0D, 1.0D);
+        d0 = Mth.clamp(d0, 0.0D, 1.0D);
         return d0 * d0;
     }
 
@@ -94,8 +94,8 @@ public abstract class NewChatGui extends AbstractGui {
      * @reason
      */
     @Overwrite
-    public void scrollChat(double posInc) {
-        this.chatScrollbarPos = (int) ((double) this.chatScrollbarPos + posInc);
+    public void scrollChat(int p_205361_) {
+        this.chatScrollbarPos = (int) ((double) this.chatScrollbarPos + p_205361_);
         if (this.chatScrollbarPos > this.trimmedMessages.size() - 3)
             this.chatScrollbarPos = this.trimmedMessages.size() - 3;
         if (this.chatScrollbarPos <= 0) {
@@ -117,7 +117,7 @@ public abstract class NewChatGui extends AbstractGui {
      * @reason
      */
     @Overwrite
-    public void render(MatrixStack p_238492_1_, int p_238492_2_) {
+    public void render(PoseStack p_238492_1_, int p_238492_2_) {
         if (!this.isChatHidden()) {
             this.processPendingMessages();
             int i = this.getLinesPerPage();
@@ -126,10 +126,10 @@ public abstract class NewChatGui extends AbstractGui {
                 boolean flag = this.isChatFocused();
 
                 double d0 = this.getScale();
-                int k = MathHelper.ceil((double) this.getWidth() / d0);
-                RenderSystem.pushMatrix();
-                RenderSystem.translatef(2.0F, 8.0F, 0.0F);
-                RenderSystem.scaled(d0, d0, 1.0D);
+                int k = Mth.ceil((double) this.getWidth() / d0);
+                p_238492_1_.pushPose();
+                p_238492_1_.translate(2.0F, 8.0F, 0.0F);
+                p_238492_1_.scale((float) d0, (float) d0, 1.0F);
                 double chatOpacity = this.minecraft.options.chatOpacity * (double) 0.9F + (double) 0.1F;
                 double accessibilityTextBackgroundOpacity = this.minecraft.options.textBackgroundOpacity;
 
@@ -143,7 +143,7 @@ public abstract class NewChatGui extends AbstractGui {
                     }
 
                     ++l;
-                    ChatLine<IReorderingProcessor> chatline = this.trimmedMessages.get(u + this.chatScrollbarPos);
+                    GuiMessage<FormattedCharSequence> chatline = this.trimmedMessages.get(u + this.chatScrollbarPos);
                     if (chatline != null) {
                         int j1 = p_238492_2_ - chatline.getAddedTime();
                         if (j1 < 200 || flag) {
@@ -168,29 +168,28 @@ public abstract class NewChatGui extends AbstractGui {
                                         p_238492_1_.translate(0.0D, 0.0D, 50.0D);
                                         //this.mc.fontRenderer.drawTextWithShadow(p_238492_1_, chatline.getLineString(), 0.0F, (float)((int)(d6 + d4)), 16777215 + (l1 << 24));
                                         ResourceLocation F = new ResourceLocation("chatimg", "imgs/" + imgID);
-                                        RenderSystem.color4f(0.7F, 0.7F, 0.7F, 0.7F);
-                                        this.minecraft.getTextureManager().bind(F);
+                                        RenderSystem.clearColor(0.7F, 0.7F, 0.7F, 0.7F);
+                                        this.minecraft.getTextureManager().bindForSetup(F);
                                         blit(p_238492_1_, 0, indexY - img.getHeight() + 9, 0, 0, img.getWidth(), img.getHeight(), img.getWidth(), img.getHeight());
                                         //
                                         p_238492_1_.popPose();
-                                        RenderSystem.disableAlphaTest();
+                                        RenderSystem.disableTexture();
                                         RenderSystem.disableBlend();
                                         indexY -= img.getHeight();
-                                        int i1 = MathHelper.floor((double) this.getWidth() / this.getScale());
-                                        List<IReorderingProcessor> list = RenderComponentsUtil.wrapComponents(allMessages.get(u + this.chatScrollbarPos).getMessage(), i1, this.minecraft.font);
+                                        int i1 = Mth.floor((double) this.getWidth() / this.getScale());
+                                        Component list = allMessages.get(u + this.chatScrollbarPos).getMessage();
                                         //System.out.println(list.size());
-                                        for (IReorderingProcessor iReorderingProcessor : list) {
-                                            p_238492_1_.pushPose();
-                                            p_238492_1_.translate(0.0D, 0.0D, 50.0D);
-                                            fill(p_238492_1_, -2, indexY, k + 4, indexY + 9, i2 << 24);
-                                            RenderSystem.enableBlend();
-                                            p_238492_1_.translate(0.0D, 0.0D, 50.0D);
-                                            this.minecraft.font.drawShadow(p_238492_1_, iReorderingProcessor, 0.0F, indexY, 16777215 + (l1 << 24));
-                                            p_238492_1_.popPose();
-                                            RenderSystem.disableAlphaTest();
-                                            RenderSystem.disableBlend();
-                                            indexY -= 9;
-                                        }
+
+                                        p_238492_1_.pushPose();
+                                        p_238492_1_.translate(0.0D, 0.0D, 50.0D);
+                                        fill(p_238492_1_, -2, indexY, k + 4, indexY + 9, i2 << 24);
+                                        RenderSystem.enableBlend();
+                                        p_238492_1_.translate(0.0D, 0.0D, 50.0D);
+                                        this.minecraft.font.drawShadow(p_238492_1_, list, 0.0F, indexY, 16777215 + (l1 << 24));
+                                        p_238492_1_.popPose();
+                                        RenderSystem.disableTexture();
+                                        RenderSystem.disableBlend();
+                                        indexY -= 9;
 
 
                                     }
@@ -202,7 +201,7 @@ public abstract class NewChatGui extends AbstractGui {
                                     p_238492_1_.translate(0.0D, 0.0D, 50.0D);
                                     this.minecraft.font.drawShadow(p_238492_1_, chatline.getMessage(), 0.0F, indexY, 16777215 + (l1 << 24));
                                     p_238492_1_.popPose();
-                                    RenderSystem.disableAlphaTest();
+                                    RenderSystem.disableTexture();
                                     RenderSystem.disableBlend();
                                     indexY -= 9;
                                 }
@@ -217,7 +216,7 @@ public abstract class NewChatGui extends AbstractGui {
                                 p_238492_1_.translate(0.0D, 0.0D, 50.0D);
                                 this.minecraft.font.drawShadow(p_238492_1_, chatline.getMessage(), 0.0F, indexY, 16777215 + (l1 << 24));
                                 p_238492_1_.popPose();
-                                RenderSystem.disableAlphaTest();
+                                RenderSystem.disableTexture();
                                 RenderSystem.disableBlend();
                                 indexY -= 9;
                             }
@@ -235,15 +234,15 @@ public abstract class NewChatGui extends AbstractGui {
                     fill(p_238492_1_, -2, 0, k + 4, 9, i3 << 24);
                     RenderSystem.enableBlend();
                     p_238492_1_.translate(0.0D, 0.0D, 50.0D);
-                    this.minecraft.font.drawShadow(p_238492_1_, new TranslationTextComponent("chat.queue", this.chatQueue.size()), 0.0F, 1.0F, 16777215 + (k2 << 24));
+                    this.minecraft.font.drawShadow(p_238492_1_, new TranslatableComponent("chat.queue", this.chatQueue.size()), 0.0F, 1.0F, 16777215 + (k2 << 24));
                     p_238492_1_.popPose();
-                    RenderSystem.disableAlphaTest();
+                    RenderSystem.disableTexture();
                     RenderSystem.disableBlend();
                 }
 
                 if (flag) {
                     int l2 = 9;
-                    RenderSystem.translatef(-3.0F, 0.0F, 0.0F);
+                    p_238492_1_.translate(-3.0F, 0.0F, 0.0F);
                     int j3 = j * l2 + j;
                     int k3 = l * l2 + l;
                     int l3 = this.chatScrollbarPos * k3 / j;
@@ -256,7 +255,7 @@ public abstract class NewChatGui extends AbstractGui {
                     }
                 }
 
-                RenderSystem.popMatrix();
+                p_238492_1_.popPose();
             }
         }
     }

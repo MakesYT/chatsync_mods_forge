@@ -1,9 +1,9 @@
 package top.ncserver.chatimg.Tools;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.ncserver.chatimg.Tools.PackTool.PackToolC;
@@ -18,7 +18,7 @@ public class SendPack {
     private final String message;
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public SendPack(PacketBuffer buffer) {
+    public SendPack(FriendlyByteBuf buffer) {
         message = buffer.readUtf(Short.MAX_VALUE);
     }
 
@@ -26,7 +26,7 @@ public class SendPack {
         this.message = message;
     }
 
-    public void toBytes(PacketBuffer buf) {
+    public void toBytes(FriendlyByteBuf buf) {
         buf.writeUtf(this.message);
     }
 
