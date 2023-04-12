@@ -18,9 +18,14 @@ import java.util.UUID;
 
 public class PackToolS {
     private final String message;
+    private int ImgID;
 
     public PackToolS(String message) {
         this.message = message;
+    }
+
+    public int getImgID() {
+        return ImgID;
     }
 
     public Map<String, Img> server(Map<String, Img> imgMap, Integer ImgID) {
@@ -45,7 +50,8 @@ public class PackToolS {
                 Img img = imgMap.get(imgID);
                 if (img.allReceived()) {
                     //LogManager.getLogger().debug("AllRegOnServerPacket");
-                    int imgId = ImgID;
+                    int imgId = ++ImgID;
+                    this.ImgID = imgId;
                     int length = 1024 * 30;
                     String base64 = img.getData();
                     int n = (base64.length() + length - 1) / length;
