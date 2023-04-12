@@ -42,7 +42,8 @@ public class SendPack {
                 packTool.client();
             } else if (FMLEnvironment.dist == Dist.DEDICATED_SERVER) {
                 PackToolS packTool = new PackToolS(this.message);
-                imgMap = packTool.server(imgMap, ImgID++);
+                imgMap = packTool.server(imgMap, ImgID);
+                ImgID = packTool.getImgID();
             }
         });
         ctx.get().setPacketHandled(true);
