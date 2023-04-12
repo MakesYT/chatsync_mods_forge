@@ -35,7 +35,7 @@ public abstract class ChatScreen extends Screen {
         if (this.commandSuggestions.mouseScrolled(p_95583_)) {
             return true;
         } else {
-            if (!hasShiftDown()) {
+            if (hasShiftDown()) {
                 p_95583_ *= 7.0;
             }
 

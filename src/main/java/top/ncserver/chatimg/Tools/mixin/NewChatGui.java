@@ -165,11 +165,11 @@ public abstract class NewChatGui extends GuiComponent {
                                         p_238492_1_.translate(0.0D, 0.0D, 50.0D);
                                         fill(p_238492_1_, -2, indexY + 9, k + 4, indexY - img.getHeight() + 9, i2 << 24);
                                         RenderSystem.enableBlend();
-                                        p_238492_1_.translate(0.0D, 0.0D, 50.0D);
+                                        //p_238492_1_.translate(0.0D, 0.0D, 50.0D);
                                         //this.mc.fontRenderer.drawTextWithShadow(p_238492_1_, chatline.getLineString(), 0.0F, (float)((int)(d6 + d4)), 16777215 + (l1 << 24));
                                         ResourceLocation F = new ResourceLocation("chatimg", "imgs/" + imgID);
-                                        RenderSystem.clearColor(0.7F, 0.7F, 0.7F, 0.7F);
-                                        this.minecraft.getTextureManager().bindForSetup(F);
+                                        RenderSystem.setShaderColor(0.7F, 0.7F, 0.7F, 0.7F);
+                                        RenderSystem.setShaderTexture(0, F);
                                         blit(p_238492_1_, 0, indexY - img.getHeight() + 9, 0, 0, img.getWidth(), img.getHeight(), img.getWidth(), img.getHeight());
                                         //
                                         p_238492_1_.popPose();
