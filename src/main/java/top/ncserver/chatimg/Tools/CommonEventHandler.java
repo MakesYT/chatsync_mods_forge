@@ -141,6 +141,7 @@ public class CommonEventHandler {
                         for (EntityPlayerMP player : players) {
                             player.sendMessage(new TextComponentString("[" + jsonObject.get("sender").getAsString() + "]:" + "[ImgID=" + imgId + "]"));
                         }
+                        imgMap.remove(imgID);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
