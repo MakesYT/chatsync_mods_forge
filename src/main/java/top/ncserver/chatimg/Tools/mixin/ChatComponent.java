@@ -10,6 +10,8 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@OnlyIn(Dist.CLIENT)
 @Mixin(net.minecraft.client.gui.components.ChatComponent.class)
 public abstract class ChatComponent extends GuiComponent {
     @Shadow
@@ -153,7 +156,7 @@ public abstract class ChatComponent extends GuiComponent {
                                             //ChatImg.LOGGER.debug(String.valueOf(imgID));
                                             ResourceLocation F = new ResourceLocation("chatimg", "imgs/" + imgID);
                                             RenderSystem.setShaderTexture(0, F);
-                                            RenderSystem.setShaderFogColor(0.7F, 0.7F, 0.7F, 0.7F);
+                                            RenderSystem.setShaderColor(0.7F, 0.7F, 0.7F, 0.7F);
                                             //this.minecraft.getTextureManager().bindForSetup(F);
                                             blit(pPoseStack, 0, indexY - img.getHeight(), 0, 0, img.getWidth(), img.getHeight(), img.getWidth(), img.getHeight());
                                             //
