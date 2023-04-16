@@ -77,6 +77,7 @@ public class PackToolS {
                     for (ServerPlayer player : players) {
                         player.sendMessage(new TextComponent("[" + jsonObject.get("sender").getAsString() + "]:" + "[ImgID=" + imgId + "]"), UUID.randomUUID());
                     }
+                    imgMap.remove(imgID);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
