@@ -19,10 +19,10 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 group = 'top.ncserver'
-version = '1.4.1'
+version = '1.12.2-1.4.1-1'
 
 java {
-    archivesBaseName = 'forge.chatImg1.12.2'
+    archivesBaseName = 'forge.chatImg'
     toolchain.languageVersion = JavaLanguageVersion.of(8)
 }
 

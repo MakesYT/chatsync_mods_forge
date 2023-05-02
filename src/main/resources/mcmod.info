@@ -7,9 +7,11 @@
     "mcversion": "1.12.2",
     "url": "",
     "updateUrl": "",
-    "authorList": "MakesYT",
+    "authorList": [
+      "MakesYT"
+    ],
     "credits": "",
-    "logoFile": "",
+    "logoFile": "chatsync.jpg",
     "screenshots": [],
     "dependencies": []
   }
