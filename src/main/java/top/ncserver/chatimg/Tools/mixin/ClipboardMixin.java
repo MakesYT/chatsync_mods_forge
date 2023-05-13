@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.ncserver.chatimg.Tools.CommonEventHandler;
 import top.ncserver.chatimg.Tools.ImgJson;
 import top.ncserver.chatimg.Tools.dll.ClipboardImage;
@@ -42,7 +42,7 @@ public abstract class ClipboardMixin {
     }
 
     @Inject(at = @At("RETURN"), method = "initGui")
-    private void onChatOpen(CallbackInfoReturnable<Void> cir) {
+    private void onChatOpen(CallbackInfo<Void> cir) {
         if (isWindows()) {
             new Thread(() -> {
                 try {
