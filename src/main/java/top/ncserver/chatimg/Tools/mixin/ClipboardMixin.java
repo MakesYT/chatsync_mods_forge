@@ -44,7 +44,7 @@ public abstract class ClipboardMixin {
 
     @Inject(at = @At("RETURN"), method = "getClipboardString", cancellable = true)
     private static void getClipboard(CallbackInfoReturnable<String> cir) {
-        if (isWindows()) {
+        if (isWindows() && Minecraft.getMinecraft().currentScreen instanceof net.minecraft.client.gui.GuiChat) {
             new Thread(() -> {
                 try {
                     // Minecraft.getInstance().player.sendMessage(new StringTextComponent("获取图片"),UUID.randomUUID());
