@@ -43,7 +43,7 @@ public abstract class ClipboardMixin {
     }
 
     @Inject(at = @At("RETURN"), method = "getClipboardString", cancellable = true)
-    private static void getClipboard(Minecraft mc, CallbackInfoReturnable<String> cir) {
+    private static void getClipboard(CallbackInfoReturnable<String> cir) {
         if (isWindows() && mc.ingameGUI.getChatGUI().getChatOpen()) {
             new Thread(() -> {
                 try {
