@@ -1,11 +1,12 @@
 package top.ncserver.chatimg.Tools.mixin;
 
+
 import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.coobird.thumbnailator.Thumbnails;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
@@ -14,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.ncserver.chatimg.Tools.CommonEventHandler;
 import top.ncserver.chatimg.Tools.ImgJson;
 import top.ncserver.chatimg.Tools.dll.ClipboardImage;
@@ -34,16 +35,16 @@ import java.util.UUID;
  * @author MakesYT
  */
 @SideOnly(Side.CLIENT)
-@Mixin(GuiChat.class)
+@Mixin(GuiScreen.class)
 public abstract class ClipboardMixin {
 
     private static boolean isWindows() {
         return System.getProperty("os.name").toUpperCase().contains("WINDOWS");
     }
 
-    @Inject(at = @At("RETURN"), method = "initGui")
-    private void onChatOpen(CallbackInfo<Void> cir) {
-        if (isWindows()) {
+    @Inject(at = @At("RETURN"), method = "getClipboardString", cancellable = true)
+    private static void getClipboard(CallbackInfoReturnable<String> cir) {
+        if (isWindows() && Minecraft.getMinecraft().currentScreen instanceof net.minecraft.client.gui.GuiChat) {
             new Thread(() -> {
                 try {
                     // Minecraft.getInstance().player.sendMessage(new StringTextComponent("获取图片"),UUID.randomUUID());
@@ -55,6 +56,7 @@ public abstract class ClipboardMixin {
                                 .scale(1f) //按比例放大缩小 和size() 必须使用一个 不然会报错
                                 .outputQuality(0.5f)    //输出的图片质量  0~1 之间,否则报错
                                 .asBufferedImage();
+                        cir.setReturnValue("");
                         Minecraft.getMinecraft().player.sendMessage(new TextComponentString("图片发送中...."));
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         ImageIO.write(image, "png", baos);
@@ -85,6 +87,7 @@ public abstract class ClipboardMixin {
 
                         }
                         Minecraft.getMinecraft().player.sendMessage(new TextComponentString("图片数据包发送完成,总计" + n + "个数据包,等待服务器回传"));
+
 
                     }
 
