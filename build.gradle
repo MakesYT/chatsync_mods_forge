@@ -20,7 +20,7 @@ apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 group = 'top.ncserver'
-version = '1.4.1'
+version = '1.4.1-1'
 
 java {
     archivesBaseName = 'forge.chatImg1.19.2'
