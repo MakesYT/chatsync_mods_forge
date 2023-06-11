@@ -153,6 +153,7 @@ public abstract class NewChatGui extends GuiComponent {
                             String json = allMessages.get(u + this.chatScrollbarPos).getMessage().getString();
 
                             if (json.contains("[ImgID=")) {
+                                //System.out.println("监测到关键字");
                                 Matcher matcher = patternP.matcher(json);
                                 int imgID = -1;
                                 try {
@@ -194,6 +195,7 @@ public abstract class NewChatGui extends GuiComponent {
 
                                     }
                                 }catch (Exception e) {
+                                    //e.printStackTrace();
                                     p_238492_1_.pushPose();
                                     p_238492_1_.translate(0.0D, 0.0D, 50.0D);
                                     fill(p_238492_1_, -2, indexY, k + 4, indexY + 9, i2 << 24);

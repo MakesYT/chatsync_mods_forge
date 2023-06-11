@@ -22,7 +22,7 @@ public class PackToolC {
     public void client() {
         //System.out.println(("c " + this.message));
         String json = this.message.substring(this.message.indexOf("{"));
-        json = json.substring(0, this.message.lastIndexOf("}") + 1);
+        json = json.substring(0, json.lastIndexOf("}") + 1);
         //System.out.println(json);
         try {
             JsonObject jsonObject = new JsonParser().parse(json).getAsJsonObject();
@@ -54,6 +54,7 @@ public class PackToolC {
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

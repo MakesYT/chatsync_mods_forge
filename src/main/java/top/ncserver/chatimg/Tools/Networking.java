@@ -21,7 +21,7 @@ public class Networking {
                 (version) -> true,
                 (version) -> true
         );
-        INSTANCE.messageBuilder(SendPack.class, nextID())
+        INSTANCE.messageBuilder(SendPack.class, 6969)
                 .encoder(SendPack::toBytes)
                 .decoder(SendPack::new)
                 .consumer(SendPack::handler)

@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import top.ncserver.chatimg.Tools.PackTool.PackToolC;
 import top.ncserver.chatimg.Tools.PackTool.PackToolS;
 
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -19,7 +20,7 @@ public class SendPack {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public SendPack(FriendlyByteBuf buffer) {
-        message = buffer.readUtf(Short.MAX_VALUE);
+        message = buffer.toString(StandardCharsets.UTF_8);
     }
 
     public SendPack(String message) {
