@@ -1,7 +1,7 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url = 'https://repo.spongepowered.org/maven' }
+        maven { url = 'http://files.minecraftforge.net/maven' }
+        maven { url = 'http://repo.spongepowered.org/maven' }
         mavenCentral()
     }
     dependencies {
@@ -19,7 +19,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'com.github.johnrengelman.shadow'
 group = 'top.ncserver'
-version = '1.12.2-1.4.1-3'
+version = '1.12.2-1.4.1-4'
 
 java {
     archivesBaseName = 'forge.chatImg'
@@ -90,7 +90,7 @@ mixin {
 
 }
 repositories {
-    maven { url = 'https://repo.spongepowered.org/maven' }
+    maven { url = 'http://repo.spongepowered.org/maven' }
 }
 dependencies {
     // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft' it is assumed
@@ -134,12 +134,12 @@ jar {
     } {
         exclude "LICENSE.txt", "META-INF/MANIFSET.MF", "META-INF/maven/**", "META-INF/*.RSA", "META-INF/*.SF"
     }
+    manifest.attributes(
+            "FMLCorePluginContainsFMLMod": "true",
+            "TweakClass": "org.spongepowered.asm.launch.MixinTweaker",
+            "ForceLoadAsMod": "true"
+    )
 
-    manifest {
-        attributes "ForceLoadAsMod": "true"
-        attributes "TweakClass": "org.spongepowered.asm.launch.MixinTweaker"
-        attributes "TweakOrder": "0"
-    }
 }
 processResources {
     inputs.property "version", project.version
